@@ -75,7 +75,8 @@ func (g *GitClient) Init(branch string) error {
 	if err := g.command("git", "config", "--global", "user.email", "concourse@local").Run(); err != nil {
 		return fmt.Errorf("failed to configure git email: %s", err)
 	}
-	if err := g.command("git", "config", "--global", "url.https://x-oauth-basic@github.com/.insteadOf", "git@github.com:").Run(); err != nil {
+	fmt.Println("SDS")
+	if err := g.command("git", "config", "credential.https://github.com.helper","'!git-credential-github-app --appId ((github/concourse-app-id)) -organization ((github/concourse-app-organization-name)) -username x-access-token'").Run(); err != nil {
 		return fmt.Errorf("failed to configure github url: %s", err)
 	}
 	if err := g.command("git", "config", "--global", "url.https://.insteadOf", "git://").Run(); err != nil {
@@ -90,6 +91,7 @@ func (g *GitClient) Pull(uri, branch string, depth int, submodules bool, fetchTa
 	if err != nil {
 		return err
 	}
+
 
 	if err := g.command("git", "remote", "add", "origin", endpoint).Run(); err != nil {
 		return fmt.Errorf("setting 'origin' remote to '%s' failed: %s", endpoint, err)
@@ -232,6 +234,6 @@ func (g *GitClient) Endpoint(uri string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to parse commit url: %s", err)
 	}
-	endpoint.User = url.UserPassword("x-oauth-basic", g.AccessToken)
+	//endpoint.User = url.UserPassword("x-oauth-basic", g.AccessToken)
 	return endpoint.String(), nil
 }
