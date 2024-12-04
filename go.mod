@@ -1,8 +1,8 @@
 module github.com/telia-oss/github-pr-resource
 
-go 1.21.0
+go 1.22.0
 
-toolchain go1.21.13
+toolchain go1.22.10
 
 require (
 	github.com/google/go-github/v61 v61.0.0
