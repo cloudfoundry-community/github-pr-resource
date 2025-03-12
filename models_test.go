@@ -39,6 +39,7 @@ func TestSource(t *testing.T) {
 			description: "should support GitHub App authentication",
 			source: resource.Source{
 				Repository:     "test/test",
+				GithubOrganziation: "test",
 				UseGitHubApp:   true,
 				PrivateKey:     "key.pem",
 				ApplicationID:  123456,
@@ -70,6 +71,7 @@ func TestSource(t *testing.T) {
 			source: resource.Source{
 				Repository:     "test/test",
 				UseGitHubApp:   true,
+				GithubOrganziation: "test",
 				PrivateKey:     "key.pem",
 				ApplicationID:  123456,
 				InstallationID: 1,
