@@ -312,4 +312,3 @@ Here is the list of changes:
 Note that if you are migrating from the original resource on a Concourse version prior to `v5.0.0`, you might
 see an error `failed to unmarshal request: json: unknown field "ref"`. The solution is to rename the resource
 so that the history is wiped. See telia-oss/github-pr-resource#64 for details.
-

@@ -40,6 +40,7 @@ func NewGitClient(source *Source, dir string, output io.Writer) (*GitClient, err
 		PrivateKey:    source.PrivateKey,
 		UseGithubApp:  source.UseGitHubApp,
 		ApplicationID: source.ApplicationID,
+		GithubOrganziation: source.GithubOrganziation,
 		Directory:     dir,
 		Output:        output,
 	}, nil
