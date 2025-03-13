@@ -36,13 +36,13 @@ func NewGitClient(source *Source, dir string, output io.Writer) (*GitClient, err
 		os.Setenv("GIT_LFS_SKIP_SMUDGE", "true")
 	}
 	return &GitClient{
-		AccessToken:   source.AccessToken,
-		PrivateKey:    source.PrivateKey,
-		UseGithubApp:  source.UseGitHubApp,
-		ApplicationID: source.ApplicationID,
+		AccessToken:        source.AccessToken,
+		PrivateKey:         source.PrivateKey,
+		UseGithubApp:       source.UseGitHubApp,
+		ApplicationID:      source.ApplicationID,
 		GithubOrganziation: source.GithubOrganziation,
-		Directory:     dir,
-		Output:        output,
+		Directory:          dir,
+		Output:             output,
 	}, nil
 }
 
@@ -63,8 +63,12 @@ func (g *GitClient) command(name string, arg ...string) *exec.Cmd {
 	cmd.Stdout = g.Output
 	cmd.Stderr = g.Output
 	cmd.Env = os.Environ()
+	if !g.UseGithubApp {
+		cmd.Env = append(cmd.Env,
+			"X_OAUTH_BASIC_TOKEN="+g.AccessToken)
+	}
+
 	cmd.Env = append(cmd.Env,
-		"X_OAUTH_BASIC_TOKEN="+g.AccessToken,
 		"GIT_ASKPASS=/usr/local/bin/askpass.sh")
 	fmt.Fprint(os.Stderr, fmt.Sprintf("\n%s %v", name, arg))
 
@@ -95,7 +99,6 @@ func (g *GitClient) Init(branch string) error {
 		}
 
 		helperStr := fmt.Sprintf("!git-credential-github-app --appId %d -organization %s -username x-access-token  -privateKeyFile /tmp/git-resource-private-key", g.ApplicationID, g.GithubOrganziation)
-		fmt.Fprint(os.Stderr, "\nsds helperStr", helperStr)
 		if err := g.command("git", "config", "credential.https://github.com.helper", helperStr).Run(); err != nil {
 			return fmt.Errorf("failed to configure github url: %s", err)
 		}
@@ -254,6 +257,9 @@ func (g *GitClient) Endpoint(uri string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to parse commit url: %s", err)
 	}
-	//endpoint.User = url.UserPassword("x-oauth-basic", g.AccessToken)
+	if !g.UseGithubApp {
+		endpoint.User = url.UserPassword("x-oauth-basic", g.AccessToken)
+	}
+
 	return endpoint.String(), nil
 }
