@@ -40,7 +40,7 @@ func NewGitClient(source *Source, dir string, output io.Writer) (*GitClient, err
 		PrivateKey:         source.PrivateKey,
 		UseGithubApp:       source.UseGitHubApp,
 		ApplicationID:      source.ApplicationID,
-		GithubOrganziation: source.GithubOrganziation,
+		GithubOrganziation: source.GithubOrganization,
 		Directory:          dir,
 		Output:             output,
 	}, nil
@@ -100,6 +100,10 @@ func (g *GitClient) Init(branch string) error {
 
 		helperStr := fmt.Sprintf("!git-credential-github-app --appId %d -organization %s -username x-access-token  -privateKeyFile /tmp/git-resource-private-key", g.ApplicationID, g.GithubOrganziation)
 		if err := g.command("git", "config", "credential.https://github.com.helper", helperStr).Run(); err != nil {
+			return fmt.Errorf("failed to configure github url: %s", err)
+		}
+	} else {
+		if err := g.command("git", "config", "url.https://x-oauth-basic@github.com/.insteadOf", "git@github.com:").Run(); err != nil {
 			return fmt.Errorf("failed to configure github url: %s", err)
 		}
 	}

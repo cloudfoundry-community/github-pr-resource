@@ -56,6 +56,11 @@ automated tests.
 | `labels`                    | No       | `["bug", "enhancement"]`         | The labels on the PR. The pipeline will only trigger on pull requests having at least one of the specified labels.                                                                                                 |
 | `disable_git_lfs`           | No       | `true`                           | Disable Git LFS, skipping an attempt to convert pointers of files tracked into their corresponding objects when checked out into a working copy.                                                                   |
 | `states`                    | No       | `["OPEN", "MERGED"]`             | The PR states to select (`OPEN`, `MERGED` or `CLOSED`). The pipeline will only trigger on pull requests matching one of the specified states. Default is ["OPEN"].                                                 |
+| `use_github_app`            | No       | `false`                          | Whether to authenticate using a github app or not.
+| `github_organization`       | No       |  `Vault-tec`                     | Which Github organization your github app is in.
+| `private_key`               | No       |  `-----BEGIN RSA...`             | Private key for your github app.
+| `installation_id`           | No       |  `12356`                         | Installation id for your github app.
+| `application_id`            | No       |  `12356`                         | Application id for your github app.
 
 **Notes:**
 
