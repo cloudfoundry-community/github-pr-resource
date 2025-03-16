@@ -37,9 +37,9 @@ automated tests.
 ## Source Configuration
 
 | Parameter                   | Required | Example                          | Description                                                                                                                                                                                                        |
-|-----------------------------|----------|----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --------------------------- | -------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `repository`                | Yes      | `itsdalmo/test-repository`       | The repository to target.                                                                                                                                                                                          |
-| `access_token`              | Yes      |                                  | A Github Access Token with repository access (required for setting status on commits). N.B. If you want github-pr-resource to work with a private repository. Set `repo:full` permissions on the access token you create on GitHub. If it is a public repository, `repo:status` is enough. When using `trusted_teams`, the `read:org` scope has to be enabled. |
+| `access_token`              | Yes      |                                  | A Github Access Token with repository access, which is required for setting status on commits. (See also the note below about required permissions.)                                                               |
 | `v3_endpoint`               | No       | `https://api.github.com`         | Endpoint to use for the V3 Github API (Restful).                                                                                                                                                                   |
 | `v4_endpoint`               | No       | `https://api.github.com/graphql` | Endpoint to use for the V4 Github API (Graphql).                                                                                                                                                                   |
 | `paths`                     | No       | `["terraform/*/*.tf"]`           | Only produce new versions if the PR includes changes to files that match one or more glob patterns or prefixes.                                                                                                    |
@@ -57,7 +57,13 @@ automated tests.
 | `disable_git_lfs`           | No       | `true`                           | Disable Git LFS, skipping an attempt to convert pointers of files tracked into their corresponding objects when checked out into a working copy.                                                                   |
 | `states`                    | No       | `["OPEN", "MERGED"]`             | The PR states to select (`OPEN`, `MERGED` or `CLOSED`). The pipeline will only trigger on pull requests matching one of the specified states. Default is ["OPEN"].                                                 |
 
-Notes:
+**Notes:**
+
+- Required permissions for `access_token`:
+    - if you want github-pr-resource to work with a private repository, set
+      `repo:full` permissions on the access token you create on GitHub.
+    - If it is a public repository, `repo:status` is enough.
+    - When using `trusted_teams`, the `read:org` scope has to be enabled.
  - If `v3_endpoint` is set, `v4_endpoint` must also be set (and the other way around).
  - Look at the [Concourse Resources documentation](https://concourse-ci.org/resources.html#resource-webhook-token)
  for webhook token configuration.
