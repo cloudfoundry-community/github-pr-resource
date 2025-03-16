@@ -14,11 +14,15 @@
 
 # Resources for the 'build-docker-image' task of the 'build' job
 /git/
+/golang-latest/
+/alpine-latest/
 /image/
 /cache/
 
 # Resources for the 'build-docker-image' task of the 'build-pr' job
 /git-pull-requests/
+/golang-latest/
+/alpine-latest/
 /image/
 /cache/
 
