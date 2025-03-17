@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/bradleyfalzon/ghinstallation/v2"
 	"github.com/google/go-github/v61/github"
 	"github.com/shurcooL/githubv4"
 	"golang.org/x/oauth2"
@@ -46,23 +47,38 @@ func NewGithubClient(s *Source) (*GithubClient, error) {
 		return nil, err
 	}
 
+	// We need a transport that we can update if using GitHub App authentication
+	transport := http.DefaultTransport.(*http.Transport).Clone()
+
 	// Skip SSL verification for self-signed certificates
 	// source: https://github.com/google/go-github/pull/598#issuecomment-333039238
 	var ctx context.Context
 	if s.SkipSSLVerification {
-		insecureClient := &http.Client{
-			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-			},
-		}
+		transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+		insecureClient := &http.Client{Transport: transport}
 		ctx = context.WithValue(context.TODO(), oauth2.HTTPClient, insecureClient)
 	} else {
 		ctx = context.TODO()
 	}
 
-	client := oauth2.NewClient(ctx, oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: s.AccessToken},
-	))
+	var client *http.Client
+	if !s.UseGitHubApp {
+		// Client using oauth2 wrapper
+		client = oauth2.NewClient(ctx, oauth2.StaticTokenSource(
+			&oauth2.Token{AccessToken: s.AccessToken},
+		))
+	} else {
+		var ghAppInstallationTransport *ghinstallation.Transport
+		ghAppInstallationTransport, err = ghinstallation.New(transport, s.ApplicationID, s.InstallationID, []byte(s.PrivateKey))
+		if err != nil {
+			return nil, fmt.Errorf("failed to generate application installation access token using private key: %s", err)
+		}
+
+		// Client using ghinstallation transport
+		client = &http.Client{
+			Transport: ghAppInstallationTransport,
+		}
+	}
 
 	var v3 *github.Client
 	if s.V3Endpoint != "" {

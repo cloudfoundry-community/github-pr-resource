@@ -29,12 +29,31 @@ type Source struct {
 	States                  []githubv4.PullRequestState `json:"states"`
 	TrustedTeams            []string                    `json:"trusted_teams"`
 	TrustedUsers            []string                    `json:"trusted_users"`
+	UseGitHubApp            bool                        `json:"use_github_app"`
+	GithubOrganization      string                      `json:"github_organization"`
+	PrivateKey              string                      `json:"private_key"`
+	ApplicationID           int64                       `json:"application_id"`
+	InstallationID          int64                       `json:"installation_id"`
 }
 
 // Validate the source configuration.
 func (s *Source) Validate() error {
-	if s.AccessToken == "" {
-		return errors.New("access_token must be set")
+	if s.AccessToken == "" && !s.UseGitHubApp {
+		return errors.New("access_token must be set if not using GitHub App authentication")
+	}
+	if s.UseGitHubApp {
+		if s.PrivateKey == "" {
+			return errors.New("private_key is required for GitHub App authentication")
+		}
+		if s.ApplicationID == 0 || s.InstallationID == 0 {
+			return errors.New("application_id and installation_id must be set if using GitHub App authentication")
+		}
+		if len(s.GithubOrganization) == 0 {
+			return errors.New("github_organization must be set if using GitHub App authentication")
+		}
+		if s.AccessToken != "" {
+			return errors.New("access_token is not required when using GitHub App authentication")
+		}
 	}
 	if s.Repository == "" {
 		return errors.New("repository must be set")

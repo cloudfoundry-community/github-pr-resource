@@ -5,6 +5,7 @@ go 1.23.0
 toolchain go1.23.7
 
 require (
+	github.com/bradleyfalzon/ghinstallation/v2 v2.14.0
 	github.com/google/go-github/v61 v61.0.0
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.8.1
 	github.com/shurcooL/githubv4 v0.0.0-20240727222349-48295856cce7
@@ -14,6 +15,8 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/golang-jwt/jwt/v4 v4.5.1 // indirect
+	github.com/google/go-github/v69 v69.0.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
