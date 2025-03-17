@@ -62,7 +62,12 @@ func NewGithubClient(s *Source) (*GithubClient, error) {
 	}
 
 	var client *http.Client
-	if s.UseGitHubApp {
+	if !s.UseGitHubApp {
+		// Client using oauth2 wrapper
+		client = oauth2.NewClient(ctx, oauth2.StaticTokenSource(
+			&oauth2.Token{AccessToken: s.AccessToken},
+		))
+	} else {
 		var ghAppInstallationTransport *ghinstallation.Transport
 		ghAppInstallationTransport, err = ghinstallation.New(transport, s.ApplicationID, s.InstallationID, []byte(s.PrivateKey))
 		if err != nil {
@@ -73,11 +78,6 @@ func NewGithubClient(s *Source) (*GithubClient, error) {
 		client = &http.Client{
 			Transport: ghAppInstallationTransport,
 		}
-	} else {
-		// Client using oauth2 wrapper
-		client = oauth2.NewClient(ctx, oauth2.StaticTokenSource(
-			&oauth2.Token{AccessToken: s.AccessToken},
-		))
 	}
 
 	var v3 *github.Client
