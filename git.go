@@ -40,7 +40,7 @@ func NewGitClient(source *Source, dir string, output io.Writer) (*GitClient, err
 		PrivateKey:         source.PrivateKey,
 		UseGithubApp:       source.UseGitHubApp,
 		ApplicationID:      source.ApplicationID,
-		GithubOrganziation: source.GithubOrganization,
+		GithubOrganization: source.GithubOrganization,
 		Directory:          dir,
 		Output:             output,
 	}, nil
@@ -52,7 +52,7 @@ type GitClient struct {
 	UseGithubApp       bool
 	Directory          string
 	ApplicationID      int64
-	GithubOrganziation string
+	GithubOrganization string
 	PrivateKey         string
 	Output             io.Writer
 }
@@ -103,7 +103,7 @@ func (g *GitClient) Init(branch string) error {
 			os.Exit(1)
 		}
 
-		helperStr := fmt.Sprintf("!git-credential-github-app --appId %d -organization %s -username x-access-token  -privateKeyFile /tmp/git-resource-private-key", g.ApplicationID, g.GithubOrganziation)
+		helperStr := fmt.Sprintf("!git-credential-github-app --appId %d -organization %s -username x-access-token  -privateKeyFile /tmp/git-resource-private-key", g.ApplicationID, g.GithubOrganization)
 		if err := g.command("git", "config", "credential.https://github.com.helper", helperStr).Run(); err != nil {
 			return fmt.Errorf("failed to configure github url: %s", err)
 		}
