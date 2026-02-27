@@ -226,12 +226,14 @@ func (g *GitClient) GitCryptUnlock(base64key string) error {
 	return nil
 }
 
-// Endpoint takes an uri and produces an endpoint with the login information baked in.
+// Endpoint takes an URI and produces a endpoint that is verified to be
+// parsable. No login information needs to be baked in, because it is already
+// transmitted by the custom X_OAUTH_BASIC_TOKEN environment variable, and the
+// ad hoc askpass.sh script.
 func (g *GitClient) Endpoint(uri string) (string, error) {
 	endpoint, err := url.Parse(uri)
 	if err != nil {
 		return "", fmt.Errorf("failed to parse commit url: %s", err)
 	}
-	endpoint.User = url.UserPassword("x-oauth-basic", g.AccessToken)
 	return endpoint.String(), nil
 }
